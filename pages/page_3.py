@@ -9,5 +9,5 @@ st.write(
 )
 
 st.write(
-    "Thank you Diedre Wilhite - for all the support and being teh best advisor ever!"
+    "Thank you Diedre Wilhite - for all the support and being the best advisor ever!"
 )
