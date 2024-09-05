@@ -1,4 +1,4 @@
-"""Main splash page for teh streamlit app"""
+"""Main splash page for the streamlit app"""
 
 import streamlit as st
 
