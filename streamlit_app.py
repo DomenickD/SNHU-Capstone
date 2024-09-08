@@ -19,3 +19,17 @@ st.write(
          However, like any investment, FAANG stocks carry risks, and it's \
          important to conduct thorough research before investing."
 )
+
+st.subheader("What to expect:")
+
+st.write(
+    """This app will have a few parts:
+         
+        - A data exploration tool for seeing the data.
+         
+        - A page explaining the inner workings of the model.
+         
+        - Acknowledgments for those you supported the project.
+         
+        """
+)
