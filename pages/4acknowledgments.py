@@ -11,3 +11,7 @@ st.write(
 st.write(
     "Thank you Diedre Wilhite - for all the support and being the best advisor ever!"
 )
+st.write(
+    "Thank you Brett Waugh - for the patience in being my first real mentor in the field \
+        and guiding me to understand the bigger picture in Data Science!"
+)
