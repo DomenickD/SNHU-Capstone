@@ -4,17 +4,10 @@ import streamlit as st
 import yfinance as yf
 import matplotlib.pyplot as plt
 
+from repeated import faang_stocks
+
 # Page title
 st.title("FAANG Stock Data")
-
-# List of FAANG stocks with their corresponding ticker symbols
-faang_stocks = {
-    "Facebook (Meta)": "META",
-    "Amazon": "AMZN",
-    "Apple": "AAPL",
-    "Netflix": "NFLX",
-    "Google (Alphabet)": "GOOGL",
-}
 
 # Add a select box to choose a FAANG stock
 selected_stock = st.selectbox("Select a FAANG stock", list(faang_stocks.keys()))

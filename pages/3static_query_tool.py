@@ -7,6 +7,8 @@ import pandas as pd
 
 st.title("Query Tool example display.")
 
+st.write("The data here is stored in a SQLITE database and is static as of 9/6/2024.")
+
 # Radio buttons for single table selection
 table_option = st.radio(
     "Select dataset:",

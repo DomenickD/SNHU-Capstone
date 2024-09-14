@@ -1,6 +1,9 @@
 """Page for predictions streamlit to streamlit cloud"""
 
 import streamlit as st
+import keras
+from joblib import load
+from repeated import faang_stocks, predict_next_day_close
 
 # import yfinance as yf
 
@@ -8,15 +11,6 @@ import streamlit as st
 
 # Page title
 st.title("FAANG Stock Data")
-
-# List of FAANG stocks with their corresponding ticker symbols
-faang_stocks = {
-    "Facebook (Meta)": "META",
-    "Amazon": "AMZN",
-    "Apple": "AAPL",
-    "Netflix": "NFLX",
-    "Google (Alphabet)": "GOOGL",
-}
 
 # Add a select box to choose a FAANG stock
 selected_stock = st.selectbox(
@@ -30,13 +24,62 @@ if st.button("Submit"):
     # Set the ticker symbol based on the selected stock
     ticker_symbol = faang_stocks[selected_stock]
 
-    if ticker_symbol == "GOOGL":
+    if ticker_symbol == "GOOG":
         st.subheader("Google stock vs. LSTM Model")
         st.image(r"images/Google_LSTM_predict.png")
         st.caption("The closer the lines, the better the model will predict.")
+
+        FILE_NAME_GOOGLE = r"models/best_model_google.keras"
+        with open(FILE_NAME_GOOGLE, "rb") as f:
+            model = keras.models.load_model(FILE_NAME_GOOGLE)
+        scaler = load("scalers/scaler_google.gz")
+        R2 = 0.9875 * 100  # this is correct
 
     if ticker_symbol == "META":
         st.subheader("Facebook (Meta) stock vs. LSTM Model")
         st.image(r"images/Meta_LSTM_predict.png")
 
-    st.write(f"{ticker_symbol}")
+        FILE_NAME_META = r"models/best_model_meta.keras"
+        with open(FILE_NAME_META, "rb") as f:
+            model = keras.models.load_model(FILE_NAME_META)
+        scaler = load("scalers/scaler_meta.gz")
+        R2 = 0.9944 * 100  # this is correct
+
+    if ticker_symbol == "AMZN":
+        st.subheader("Amazon stock vs. LSTM Model")
+        st.image(r"images/Amazon_LSTM_predict.png")
+
+        FILE_NAME_AMZN = r"models/best_model_amazon.keras"
+        with open(FILE_NAME_AMZN, "rb") as f:
+            model = keras.models.load_model(FILE_NAME_AMZN)
+        scaler = load("scalers/scaler_amazon.gz")
+        R2 = 0.9679 * 100  # this is correct
+
+    if ticker_symbol == "AAPL":
+        st.subheader("Apple stock vs. LSTM Model")
+        st.image(r"images/Apple_LSTM_predict.png")
+
+        FILE_NAME_AAPL = r"models/best_model_apple.keras"
+        with open(FILE_NAME_AAPL, "rb") as f:
+            model = keras.models.load_model(FILE_NAME_AAPL)
+        scaler = load("scalers/scaler_apple.gz")
+        R2 = 0.9071 * 100  # this is correct
+
+    if ticker_symbol == "NFLX":
+        st.subheader("Netflix stock vs. LSTM Model")
+        st.image(r"images/Netflix_LSTM_predict.png")
+
+        FILE_NAME_NFLX = r"models/best_model_netflix.keras"
+        with open(FILE_NAME_NFLX, "rb") as f:
+            model = keras.models.load_model(FILE_NAME_NFLX)
+        scaler = load("scalers/scaler_netflix.gz")
+        R2 = 0.9486 * 100  # this is correct
+
+    # st.write(f"{ticker_symbol}")
+    # Use the prediction function
+
+    predicted_close = predict_next_day_close(ticker_symbol, model, scaler)
+    st.write(
+        f"Predicted next day's close price for {ticker_symbol}: ${predicted_close:.2f}"
+    )
+    st.write(f"The R2 score is: {R2:.2f}%")
