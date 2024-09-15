@@ -30,7 +30,6 @@ if st.button("Submit"):
     if ticker_symbol == "GOOG":
         st.subheader("Google stock vs. LSTM Model")
         st.image(r"images/Google_LSTM_predict.png")
-        st.caption("The closer the lines, the better the model will predict.")
 
         FILE_NAME_GOOGLE = r"models/best_model_google.keras"
         with open(FILE_NAME_GOOGLE, "rb") as f:
@@ -80,7 +79,11 @@ if st.button("Submit"):
 
     # st.write(f"{ticker_symbol}")
     # Use the prediction function
-
+    st.caption(
+        "The closer the lines, the better the model will predict.\
+               In order to get better predictions, we need access to news\
+               data to account for a wide range of variables."
+    )
     predicted_close = predict_next_day_close(ticker_symbol, MODEL, SCALER)
     st.write(
         f"Predicted next day's close price for {ticker_symbol}: ${predicted_close:.2f}"
