@@ -19,8 +19,8 @@ selected_stock = st.selectbox(
 )
 
 R2 = 0.00
-model = "No Model assigned."
-scaler = "No scaler assigned."
+MODEL = "No Model assigned."
+SCALER = "No scaler assigned."
 # Add a submit button
 if st.button("Submit"):
 
@@ -34,8 +34,8 @@ if st.button("Submit"):
 
         FILE_NAME_GOOGLE = r"models/best_model_google.keras"
         with open(FILE_NAME_GOOGLE, "rb") as f:
-            model = keras.models.load_model(FILE_NAME_GOOGLE)
-        scaler = load("scalers/scaler_google.gz")
+            MODEL = keras.models.load_model(FILE_NAME_GOOGLE)
+        SCALER = load("scalers/scaler_google.gz")
         R2 = 0.9875 * 100  # this is correct
 
     if ticker_symbol == "META":
@@ -44,8 +44,8 @@ if st.button("Submit"):
 
         FILE_NAME_META = r"models/best_model_meta.keras"
         with open(FILE_NAME_META, "rb") as f:
-            model = keras.models.load_model(FILE_NAME_META)
-        scaler = load("scalers/scaler_meta.gz")
+            MODEL = keras.models.load_model(FILE_NAME_META)
+        SCALER = load("scalers/scaler_meta.gz")
         R2 = 0.9944 * 100  # this is correct
 
     if ticker_symbol == "AMZN":
@@ -54,8 +54,8 @@ if st.button("Submit"):
 
         FILE_NAME_AMZN = r"models/best_model_amazon.keras"
         with open(FILE_NAME_AMZN, "rb") as f:
-            model = keras.models.load_model(FILE_NAME_AMZN)
-        scaler = load("scalers/scaler_amazon.gz")
+            MODEL = keras.models.load_model(FILE_NAME_AMZN)
+        SCALER = load("scalers/scaler_amazon.gz")
         R2 = 0.9679 * 100  # this is correct
 
     if ticker_symbol == "AAPL":
@@ -64,8 +64,8 @@ if st.button("Submit"):
 
         FILE_NAME_AAPL = r"models/best_model_apple.keras"
         with open(FILE_NAME_AAPL, "rb") as f:
-            model = keras.models.load_model(FILE_NAME_AAPL)
-        scaler = load("scalers/scaler_apple.gz")
+            MODEL = keras.models.load_model(FILE_NAME_AAPL)
+        SCALER = load("scalers/scaler_apple.gz")
         R2 = 0.9071 * 100  # this is correct
 
     if ticker_symbol == "NFLX":
@@ -74,14 +74,14 @@ if st.button("Submit"):
 
         FILE_NAME_NFLX = r"models/best_model_netflix.keras"
         with open(FILE_NAME_NFLX, "rb") as f:
-            model = keras.models.load_model(FILE_NAME_NFLX)
-        scaler = load("scalers/scaler_netflix.gz")
+            MODEL = keras.models.load_model(FILE_NAME_NFLX)
+        SCALER = load("scalers/scaler_netflix.gz")
         R2 = 0.9486 * 100  # this is correct
 
     # st.write(f"{ticker_symbol}")
     # Use the prediction function
 
-    predicted_close = predict_next_day_close(ticker_symbol, model, scaler)
+    predicted_close = predict_next_day_close(ticker_symbol, MODEL, SCALER)
     st.write(
         f"Predicted next day's close price for {ticker_symbol}: ${predicted_close:.2f}"
     )
