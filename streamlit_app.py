@@ -2,7 +2,11 @@
 
 import streamlit as st
 
-st.title("Predicting Stock data for FAANG stocks")
+st.write(
+    """
+# Predicting Stock data for FAANG stocks
+"""
+)
 
 st.caption("By: Domenick Dobbs")
 
