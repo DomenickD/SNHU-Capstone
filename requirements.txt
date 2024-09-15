@@ -7,3 +7,4 @@ keras
 joblib
 numpy
 tensorflow
+scikit-learn
