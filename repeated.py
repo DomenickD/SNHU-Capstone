@@ -36,7 +36,8 @@ def prepare_data_for_prediction(data, scaler):
 
     if valid_close_rows < 90:
         raise ValueError(
-            f"Not enough valid 'Close' price data to make a prediction. Found {valid_close_rows} rows."
+            f"Not enough valid 'Close' price data to make \
+                a prediction. Found {valid_close_rows} rows."
         )
 
     # Get the Close prices and scale them

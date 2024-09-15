@@ -17,7 +17,10 @@ selected_stock = st.selectbox(
     "Select a FAANG stock to see the prediction based on our models",
     list(faang_stocks.keys()),
 )
-st.caption("Only Google & Meta is supported currently.")
+
+R2 = 0.00
+model = "No Model assigned."
+scaler = "No scaler assigned."
 # Add a submit button
 if st.button("Submit"):
 
