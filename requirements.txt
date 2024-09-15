@@ -5,3 +5,5 @@ streamlit
 pylint
 keras
 joblib
+numpy==1.24.3
+tensorflow
