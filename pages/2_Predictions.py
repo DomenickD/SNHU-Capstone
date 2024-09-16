@@ -84,8 +84,16 @@ if st.button("Submit"):
                In order to get better predictions, we need access to news\
                data to account for a wide range of variables."
     )
+
+    st.caption(
+        "The graph displays how the model performed epoch for epoch.\
+               As we can see, the first 80% of the graph is predicting much closer \
+               to the actual stock price than the last 20% of the graph."
+    )
     predicted_close = predict_next_day_close(ticker_symbol, MODEL, SCALER)
     st.write(
         f"Predicted next day's close price for {ticker_symbol}: ${predicted_close:.2f}"
     )
-    st.write(f"The R2 score is: {R2:.2f}%")
+    st.write(
+        f"The R2 score of the training data (the first 80% of the graph) is: {R2:.2f}%"
+    )
