@@ -3,7 +3,12 @@
 import streamlit as st
 import keras
 from joblib import load
-from repeated import faang_stocks, predict_next_day_close
+from repeated import (
+    faang_stocks,
+    predict_next_day_close,
+    fetch_stock_data,
+    calculate_mape,
+)
 
 # import yfinance as yf
 
@@ -19,8 +24,8 @@ selected_stock = st.selectbox(
 )
 
 R2 = 0.00
-MODEL = "No Model assigned."
-SCALER = "No scaler assigned."
+MODEL = None
+SCALER = None
 # Add a submit button
 if st.button("Submit"):
 
@@ -77,23 +82,66 @@ if st.button("Submit"):
         SCALER = load("scalers/scaler_netflix.gz")
         R2 = 0.9486 * 100  # this is correct
 
-    # st.write(f"{ticker_symbol}")
-    # Use the prediction function
     st.caption(
         "The closer the lines, the better the model will predict.\
                In order to get better predictions, we need access to news\
                data to account for a wide range of variables."
     )
 
-    st.caption(
-        "The graph displays how the model performed epoch for epoch.\
-               As we can see, the first 80% of the graph is predicting much closer \
-               to the actual stock price than the last 20% of the graph."
-    )
-    predicted_close = predict_next_day_close(ticker_symbol, MODEL, SCALER)
-    st.write(
-        f"Predicted next day's close price for {ticker_symbol}: ${predicted_close:.2f}"
-    )
-    st.write(
-        f"The R2 score of the training data (the first 80% of the graph) is: {R2:.2f}%"
-    )
+    # st.caption(
+    #     "The graph displays how the model performed epoch for epoch.\
+    #            As we can see, the first 80% of the graph is predicting much closer \
+    #            to the actual stock price than the last 20% of the graph."
+    # )
+
+    # Fetch historical data for the selected stock
+    data = fetch_stock_data(ticker_symbol)
+
+    if not data.empty:
+        # Calculate the MAPE using the new function
+        try:
+            mape = calculate_mape(MODEL, SCALER, data)
+            st.write(
+                f"Model's Mean Absolute Percentage Error (MAPE) on test data: {mape:.2f}%."
+            )
+            st.caption("**Remember**: MAPE - (The lower the better.)")
+        except ValueError as e:
+            st.error(f"Error calculating MAPE: {e}")
+            st.stop()
+
+        # Predict the next day's closing price
+        try:
+            predicted_close = predict_next_day_close(ticker_symbol, MODEL, SCALER)
+            last_close_price = data["Close"].iloc[-1]
+
+            # Determine if the stock is predicted to go up or down
+            if predicted_close > last_close_price:
+                MOVEMENT = "up 📈"
+            elif predicted_close < last_close_price:
+                MOVEMENT = "down 📉"
+            else:
+                MOVEMENT = "remain the same"
+
+            st.write(
+                f"Predicted next day's close price for {selected_stock} ({ticker_symbol}): ${predicted_close:.2f}"
+            )
+            st.write(
+                f"The model predicts the stock will go **{MOVEMENT}** from \${last_close_price:.2f} to \${predicted_close:.2f}."
+            )
+        except ValueError as e:
+            st.error(f"Error predicting next day's close price: {e}")
+            st.stop()
+
+    else:
+        st.error("No data available for the selected stock.")
+
+    # st.write(f"{ticker_symbol}")
+    # Use the prediction function
+
+    # predicted_close = predict_next_day_close(ticker_symbol, MODEL, SCALER)
+    # st.write(
+    #     f"Predicted next day's close price for {ticker_symbol}: ${predicted_close:.2f}"
+    # )
+    # st.write(
+    #     f"The R2 score of the training data (the first 80% of the graph) is: {R2:.2f}%"
+    # )

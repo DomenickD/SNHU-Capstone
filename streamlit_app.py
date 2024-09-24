@@ -63,6 +63,24 @@ The data is scaled with a Min-Max Scaler. A MinMaxScaler works \
 
 st.divider()
 
+st.subheader("Scoring the model with Mean Absolute Percentage Error (MAPE)")
+
+st.write(
+    """
+Why MAPE?
+
+- **Interpretability**: MAPE expresses error as a percentage, which is easier for users to understand.
+         
+- **Scale Independence**: It provides a relative measure of the error, making it easier to compare across different stocks.
+         
+**Note**: MAPE can be undefined or misleading if actual values are zero or close to zero, but for stock prices, this isn't a concern.
+
+
+"""
+)
+
+st.divider()
+
 st.subheader("Limitations")
 
 st.write(

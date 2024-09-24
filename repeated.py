@@ -2,6 +2,8 @@
     maintaianbaility, repeatability and linting"""
 
 import yfinance as yf
+from sklearn.metrics import mean_absolute_percentage_error
+import numpy as np
 
 faang_stocks = {
     "Facebook (Meta)": "META",
@@ -65,3 +67,44 @@ def predict_next_day_close(ticker_symbol, model, scaler):
     predicted_close = scaler.inverse_transform(predicted_scaled_close)
 
     return predicted_close[0][0]
+
+
+def calculate_mape(model, scaler, data, sequence_length=90):
+    """Calculate MAPE for the model based on the data provided."""
+    if data.empty:
+        raise ValueError("The fetched data is empty.")
+
+    data_close = data["Close"].values.reshape(-1, 1)
+    data_close_scaled = scaler.transform(data_close)
+
+    # Create sequences and corresponding targets
+    X = []
+    y = []
+    for i in range(sequence_length, len(data_close_scaled)):
+        X.append(data_close_scaled[i - sequence_length : i, 0])
+        y.append(data_close_scaled[i, 0])
+
+    X = np.array(X)
+    y = np.array(y)
+
+    # Reshape X for LSTM input
+    X = X.reshape((X.shape[0], X.shape[1], 1))
+
+    # Split the data into training and testing sets
+    train_size = int(len(X) * 0.8)
+    X_train, X_test = X[:train_size], X[train_size:]
+    y_train, y_test = y[:train_size], y[train_size:]
+
+    # Make predictions on the test set
+    y_pred_scaled = model.predict(X_test)
+
+    # Inverse transform the scaled predictions and actual values
+    y_pred = scaler.inverse_transform(y_pred_scaled)
+    y_test_actual = scaler.inverse_transform(y_test.reshape(-1, 1))
+
+    # Calculate MAPE
+    mape = (
+        mean_absolute_percentage_error(y_test_actual, y_pred) * 100
+    )  # Convert to percentage
+
+    return mape
