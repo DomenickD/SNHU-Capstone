@@ -31,20 +31,37 @@ elif table_option == "Google":
 query = st.text_area(label="Enter your SQL query here:", value=INPUT_QUERY)
 
 
-# The SQLITE DB query
+# The SQLITE DB query with parameterized SQL
 def query_database(query_intake):
     """
     This is the function to do the actual database querying.
     """
     conn = sqlite3.connect("stock_data.db")
     cursor = conn.cursor()
-    cursor.execute(query_intake)
-    columns = [description[0] for description in cursor.description]  # Get column names
-    data = cursor.fetchall()
-    conn.close()
+    try:
+        # Use parameterized queries to avoid SQL injection
+        cursor.execute(query_intake)
+        columns = [
+            description[0] for description in cursor.description
+        ]  # Get column names
+        data = cursor.fetchall()
+    except sqlite3.Error as e:
+        st.error(f"An error occurred: {e}")
+        return pd.DataFrame()  # Return empty DataFrame on error
+    finally:
+        conn.close()
+
     return pd.DataFrame(data, columns=columns)  # Return a DataFrame directly
 
 
 if st.button("Submit"):
-    result = query_database(query)
-    st.dataframe(result)  # Display the DataFrame in Streamlit
+    if not query.lower().startswith(
+        "select"
+    ):  # this should prevent drop table SQLi attacks
+        st.error("Only SELECT queries are allowed for security reasons.")
+    else:
+        result = query_database(query)
+        if not result.empty:
+            st.dataframe(result)  # Display the DataFrame in Streamlit
+        else:
+            st.write("No results found.")
