@@ -80,7 +80,9 @@ if st.button("Submit"):
         formatted_date = last_pull_date.strftime("%m/%d/%Y %H:%M:%S")
 
         # Display the last update date for the selected ticker
-        st.write(f"The data for {table_option} was last updated on: {formatted_date}")
+        st.write(
+            f"The data for {table_option} was last updated on: {formatted_date} GMT -01:00"
+        )
     else:
         st.write(f"No data available for {table_option}.")
 
