@@ -14,6 +14,16 @@ CSV_DIRECTORY = "stock_data_csv"
 conn = sqlite3.connect(DATABASE_NAME)
 cursor = conn.cursor()
 
+cursor.execute(
+    """
+CREATE TABLE IF NOT EXISTS log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ticker TEXT,
+    pull_date TIMESTAMP
+)
+"""
+)
+
 # Iterate through CSV files in the directory
 for filename in os.listdir(CSV_DIRECTORY):
     if filename.endswith(".csv"):

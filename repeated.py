@@ -1,6 +1,8 @@
 """Repeated lists, dictionaries, ad functions to help with code \
     maintaianbaility, repeatability and linting"""
 
+import sqlite3
+from datetime import datetime
 import yfinance as yf
 from sklearn.metrics import mean_absolute_percentage_error
 import numpy as np
@@ -10,14 +12,29 @@ faang_stocks = {
     "Amazon": "AMZN",
     "Apple": "AAPL",
     "Netflix": "NFLX",
-    "Google (Alphabet)": "GOOG",
+    "Google (Alphabet)": "GOOGL",
 }
 
 
-def fetch_stock_data(ticker_symbol, period="6mo"):
-    """Fetch the last 3 months of stock data"""
+def fetch_and_save_stock_data(ticker_symbol, period="6mo"):
+    """Fetch the stock data from yfinance and save to the database."""
     ticker = yf.Ticker(ticker_symbol)
     data = ticker.history(period=period)
+
+    # Save data to the database
+    conn = sqlite3.connect("stock_data.db")
+    data.to_sql(ticker_symbol, conn, if_exists="replace", index=True)
+
+    # Log the API pull with timestamp
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO log (ticker, pull_date) VALUES (?, ?)",
+        (ticker_symbol, datetime.now()),
+    )
+
+    conn.commit()
+    conn.close()
+
     return data
 
 
@@ -55,7 +72,7 @@ def prepare_data_for_prediction(data, scaler):
 def predict_next_day_close(ticker_symbol, model, scaler):
     """Predict the next day's close price"""
     # Fetch stock data
-    stock_data = fetch_stock_data(ticker_symbol)
+    stock_data = fetch_and_save_stock_data(ticker_symbol)
 
     # Prepare data for prediction
     prepared_data = prepare_data_for_prediction(stock_data, scaler)
@@ -94,6 +111,9 @@ def calculate_mape(model, scaler, data, sequence_length=90):
     train_size = int(len(X) * 0.8)
     X_train, X_test = X[:train_size], X[train_size:]
     y_train, y_test = y[:train_size], y[train_size:]
+
+    print(X_train)
+    print(y_train)
 
     # Make predictions on the test set
     y_pred_scaled = model.predict(X_test)

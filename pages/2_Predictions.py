@@ -6,7 +6,7 @@ from joblib import load
 from repeated import (
     faang_stocks,
     predict_next_day_close,
-    fetch_stock_data,
+    fetch_and_save_stock_data,
     calculate_mape,
 )
 
@@ -32,7 +32,7 @@ if st.button("Submit"):
     # Set the ticker symbol based on the selected stock
     ticker_symbol = faang_stocks[selected_stock]
 
-    if ticker_symbol == "GOOG":
+    if ticker_symbol == "GOOGL":
         st.subheader("Google stock vs. LSTM Model")
         st.image(r"images/Google_LSTM_predict.png")
 
@@ -95,7 +95,7 @@ if st.button("Submit"):
     # )
 
     # Fetch historical data for the selected stock
-    data = fetch_stock_data(ticker_symbol)
+    data = fetch_and_save_stock_data(ticker_symbol)
 
     if not data.empty:
         # Calculate the MAPE using the new function

@@ -2,12 +2,40 @@
 from 9/6/2024"""
 
 import sqlite3
+from datetime import datetime
 import streamlit as st
 import pandas as pd
 
+# from repeated import fetch_and_save_stock_data
+
+
+def get_latest_pull_date(ticker):
+    """
+    Function to get the latest pull date for a specific ticker.
+    """
+    conn = sqlite3.connect("stock_data.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT MAX(pull_date) FROM log WHERE ticker = ?", (ticker,))
+    latest_pull_date = cursor.fetchone()[0]
+    conn.close()
+    return latest_pull_date
+
+
 st.title("Query Tool example display.")
 
-st.write("The data here is stored in a SQLITE database and is static as of 9/6/2024.")
+# last_pull_date = (
+#     get_latest_pull_date()
+# )  # Assuming this returns a string like "2024-10-12 20:16:18.343114"
+
+# # Convert the string to a datetime object
+# last_pull_date = datetime.strptime(last_pull_date, "%Y-%m-%d %H:%M:%S.%f")
+
+# # Now you can format the datetime object
+# formatted_date = last_pull_date.strftime("%m/%d/%Y")
+
+# st.write(
+#     f"The data here is stored in a SQLITE database and was last updated on: {formatted_date}"
+# )
 
 # Radio buttons for single table selection
 table_option = st.radio(
@@ -16,17 +44,28 @@ table_option = st.radio(
     key="table_option",
 )
 
-INPUT_QUERY = ""
-if table_option == "Facebook(META)":
-    INPUT_QUERY = "SELECT * FROM META;"
-elif table_option == "Amazon":
-    INPUT_QUERY = "SELECT * FROM AMZN;"
-elif table_option == "Apple":
-    INPUT_QUERY = "SELECT * FROM AAPL;"
-elif table_option == "Netflix":
-    INPUT_QUERY = "SELECT * FROM NFLX;"
-elif table_option == "Google":
-    INPUT_QUERY = "SELECT * FROM GOOGL;"
+# INPUT_QUERY = ""
+# if table_option == "Facebook(META)":
+#     INPUT_QUERY = "SELECT * FROM META;"
+# elif table_option == "Amazon":
+#     INPUT_QUERY = "SELECT * FROM AMZN;"
+# elif table_option == "Apple":
+#     INPUT_QUERY = "SELECT * FROM AAPL;"
+# elif table_option == "Netflix":
+#     INPUT_QUERY = "SELECT * FROM NFLX;"
+# elif table_option == "Google":
+#     INPUT_QUERY = "SELECT * FROM GOOGL;"
+
+ticker_map = {
+    "Facebook(META)": "META",
+    "Amazon": "AMZN",
+    "Apple": "AAPL",
+    "Netflix": "NFLX",
+    "Google": "GOOGL",
+}
+selected_ticker = ticker_map[table_option]
+
+INPUT_QUERY = f"SELECT * FROM {selected_ticker};"
 
 query = st.text_area(label="Enter your SQL query here:", value=INPUT_QUERY)
 
@@ -55,6 +94,21 @@ def query_database(query_intake):
 
 
 if st.button("Submit"):
+
+    last_pull_date = get_latest_pull_date(selected_ticker)
+
+    if last_pull_date:
+        # Convert the string to a datetime object
+        last_pull_date = datetime.strptime(last_pull_date, "%Y-%m-%d %H:%M:%S.%f")
+
+        # Format the datetime object for display
+        formatted_date = last_pull_date.strftime("%m/%d/%Y %H:%M:%S")
+
+        # Display the last update date for the selected ticker
+        st.write(f"The data for {table_option} was last updated on: {formatted_date}")
+    else:
+        st.write(f"No data available for {table_option}.")
+
     if not query.lower().startswith(
         "select"
     ):  # this should prevent drop table SQLi attacks
