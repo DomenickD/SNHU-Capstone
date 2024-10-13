@@ -23,20 +23,6 @@ def get_latest_pull_date(ticker):
 
 st.title("Query Tool example display.")
 
-# last_pull_date = (
-#     get_latest_pull_date()
-# )  # Assuming this returns a string like "2024-10-12 20:16:18.343114"
-
-# # Convert the string to a datetime object
-# last_pull_date = datetime.strptime(last_pull_date, "%Y-%m-%d %H:%M:%S.%f")
-
-# # Now you can format the datetime object
-# formatted_date = last_pull_date.strftime("%m/%d/%Y")
-
-# st.write(
-#     f"The data here is stored in a SQLITE database and was last updated on: {formatted_date}"
-# )
-
 # Radio buttons for single table selection
 table_option = st.radio(
     "Select dataset:",
@@ -44,17 +30,6 @@ table_option = st.radio(
     key="table_option",
 )
 
-# INPUT_QUERY = ""
-# if table_option == "Facebook(META)":
-#     INPUT_QUERY = "SELECT * FROM META;"
-# elif table_option == "Amazon":
-#     INPUT_QUERY = "SELECT * FROM AMZN;"
-# elif table_option == "Apple":
-#     INPUT_QUERY = "SELECT * FROM AAPL;"
-# elif table_option == "Netflix":
-#     INPUT_QUERY = "SELECT * FROM NFLX;"
-# elif table_option == "Google":
-#     INPUT_QUERY = "SELECT * FROM GOOGL;"
 
 ticker_map = {
     "Facebook(META)": "META",
